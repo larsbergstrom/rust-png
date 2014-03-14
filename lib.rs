@@ -167,7 +167,7 @@ pub extern fn write_data(png_ptr: *ffi::png_struct, data: *u8, length: size_t) {
         let io_ptr = ffi::png_get_io_ptr(png_ptr);
         let writer: &mut &mut io::Writer = cast::transmute(io_ptr);
         vec::raw::buf_as_slice(data, length as uint, |buf| {
-            writer.write(buf);
+            writer.write(buf).unwrap();
         });
     }
 }
@@ -176,7 +176,7 @@ pub extern fn flush_data(png_ptr: *ffi::png_struct) {
     unsafe {
         let io_ptr = ffi::png_get_io_ptr(png_ptr);
         let writer: &mut &mut io::Writer = cast::transmute(io_ptr);
-        writer.flush();
+        writer.flush().unwrap();
     }
 }
 
