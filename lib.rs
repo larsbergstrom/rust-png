@@ -167,10 +167,14 @@ pub extern fn write_data(png_ptr: *ffi::png_struct, data: *u8, length: size_t) {
         let io_ptr = ffi::png_get_io_ptr(png_ptr);
         let writer: &mut &mut io::Writer = cast::transmute(io_ptr);
         vec::raw::buf_as_slice(data, length as uint, |buf| {
+<<<<<<< HEAD
             match writer.write(buf) {
                 Err(e) => fail!("{}", e.desc),
                 _ => {}
             }
+=======
+            writer.write(buf).unwrap();
+>>>>>>> Warning police.
         });
     }
 }
@@ -179,10 +183,14 @@ pub extern fn flush_data(png_ptr: *ffi::png_struct) {
     unsafe {
         let io_ptr = ffi::png_get_io_ptr(png_ptr);
         let writer: &mut &mut io::Writer = cast::transmute(io_ptr);
+<<<<<<< HEAD
         match writer.flush() {
             Err(e) => fail!("{}", e.desc),
             _ => {}
         }
+=======
+        writer.flush().unwrap();
+>>>>>>> Warning police.
     }
 }
 
