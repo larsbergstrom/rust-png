@@ -243,7 +243,9 @@ pub fn store_png(img: &Image, path: &Path) -> Result<(),~str> {
 
 #[cfg(test)]
 mod test {
-    use extra::test::{bench, fmt_bench_samples};
+    extern crate test;
+    use self::test::bench;
+    use self::test::fmt_bench_samples;
     use std::io;
     use std::io::File;
     use std::vec;
@@ -255,8 +257,8 @@ mod test {
     fn test_valid_png() {
         let file = "test/servo-screenshot.png";
         let mut reader = match File::open_mode(&Path::new(file), io::Open, io::Read) {
-            Some(r) => r,
-            None => fail!("could not open file"),
+            Ok(r) => r,
+            Err(_) => fail!("could not open file"),
         };
 
         let mut buf = vec::from_elem(1024, 0u8);
@@ -289,10 +291,13 @@ mod test {
 
     fn bench_file_from_memory(file: &'static str, w: u32, h: u32, c: ColorType) {
         let mut reader = match File::open_mode(&Path::new(file), io::Open, io::Read) {
-            Some(r) => r,
-            None => fail!("could not open '{}'", file)
+            Ok(r) => r,
+            Err(_) => fail!("could not open '{}'", file)
         };
-        let buf = reader.read_to_end();
+        let buf = match reader.read_to_end() {
+            Ok(b) => b,
+            Err(_) => fail!("could not read to end '{}'", file),
+        };
         let bs = bench::benchmark(|b| b.iter(|| {
             match load_png_from_memory(buf) {
                 Err(m) => fail!(m),
